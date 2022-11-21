@@ -180,21 +180,23 @@ class Device():
         self.menu.post(event.x_root, event.y_root)
 
     def delete(self):
-        print(self.links)
-        print("nombre de liens", len(self.links))
-        self.delete_links()
+        if self.properties_window:
+            self.properties_window.destroy()
+        devices = []
+        for link in list(self.links):
+            if link.device1 and link.device1 not in devices:
+                devices.append(link.device1)
+            if link.device2 and link.device2 not in devices:
+                devices.append(link.device2)
+            link.delete_all()
+        for device in devices:
+            try:
+                device.properties_update()
+            except:
+                pass
         self.canvas.delete(self.id)
         self.canvas.delete(self.text)
         self.canvas.master.devicelist.remove(self)
-        print('fin delete')
-
-    def delete_links(self):
-        print("nombre de liens", len(self.links))
-        for link in list(self.links):
-            print("delete link", link.id)
-            link.delete()
-            print("Nombre de lien restant", len(self.links))
-        print("fin de boucle")
 
     def rename(self):
         window = Toplevel()
@@ -219,6 +221,8 @@ class Device():
 
     def icon(self):
         window = Toplevel()
+        window.title(f"Changer l'icone de {self.name}")
+        window.resizable(False, False)
         window.focus()
         window.title(f"Icone {self.name}")
         window.resizable(False, False)
@@ -265,12 +269,11 @@ class Device():
         
     def properties_update(self):
         if self.properties_window:
-            window_properties = self.properties_window
-            for widget in window_properties.winfo_children():
+            window = self.properties_window
+            for widget in window.winfo_children():
                 widget.destroy()
-            self.properties_create(window_properties)
-            if window_properties:
-                self.properties_window = window_properties
+            self.properties_create(window)
+            self.properties_window = window
 
     def properties_delete(self):
         self.properties_window = None
@@ -396,7 +399,6 @@ class Link:
             self.canvas.coords(self.id, self.x0, self.y0, self.x, self.y)
 
     def delete(self):
-        print("delete", self.device1.name, self.device2.name, self.id)
         if self.device1:
             self.device1.links.remove(self)
             self.device1.properties_update()
@@ -405,6 +407,13 @@ class Link:
             self.device2.properties_update()
         
         self.canvas.delete(self.id) 
+
+    def delete_all(self):
+        self.canvas.delete(self.id)
+        if self.device1:
+            self.device1.links.remove(self)
+        if self.device2:
+            self.device2.links.remove(self)
 
 ########################################################################################################################################################
 
