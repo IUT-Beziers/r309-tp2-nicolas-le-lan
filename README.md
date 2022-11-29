@@ -9,7 +9,7 @@ Il est possible de créer des éléments de réseau (switch, routeur, client, et
 
 ## **Installation**
 
-### <u>Prérequis</u>
+### Prérequis
 
 Pour pouvoir utiliser ce logiciel, il faut installer les librairies
 suivantes :
@@ -18,7 +18,7 @@ suivantes :
 * Re
 * PIL
 
-### <u>Installation</u>
+### Installation
 
 Pour installer ce logiciel, il suffit de cloner le dépôt git suivant :  
 https://github.com/IUT-Beziers/r309-tp2-nicolas-le-lan
@@ -26,7 +26,7 @@ https://github.com/IUT-Beziers/r309-tp2-nicolas-le-lan
 et de lancer le fichier exercice[1,2,3].py
 
 ## **Utilisation**
-### <u>Eléments</u>
+### Eléments
 #### Création
 Pour créer un élément, il faut cliquer sur le bouton du type d'élément souhaité et cliquer sur la zone de dessin.
 Il est aussi possible de choisir un element en effectuant un clic droit sur la zone de dessin.
@@ -44,12 +44,12 @@ Pour afficher et modifier les propriétés d'un élément, il faut faire un clic
 
 Une fenêtre s'ouvre alors et permet de modifier les propriétés de l'élément, c'est à dire son nom, son icone, ses connexions, etc.
 
-### <u>Connexion</u>
+### Connexion
 #### Création
 Pour créer une connexion, il faut cliquer sur le bouton "Dessin", "Ligne" ou "Flèche" et cliquer-déplacer la souris de l'élément source vers l'élément cible.
 
 #### Suppression
 Pour supprimer une connexion, il faut faire un clic droit sur la connexion et choisir "Supprimer".
 
-### <u>Suppression</u>
+### Suppression
 Pour tout supprimer, il faut cliquer sur le bouton "Effacer".
