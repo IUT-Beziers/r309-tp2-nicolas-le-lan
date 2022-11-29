@@ -1,1 +1,55 @@
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-c66648af7eb3fe8bc4f294546bfd86ef473780cde1dea487d3c4ff354943c9ae.svg)](https://classroom.github.com/online_ide?assignment_repo_id=9357577&assignment_repo_type=AssignmentRepo)
+# TP 2
+
+@author: Nicolas LE LAN
+
+## **Introduction**
+
+Ce TP a pour but de réaliser un logiciel codé en Python permettant de dessiner des architectures réseau de façon simple et élégante.  
+Il est possible de créer des éléments de réseau (switch, routeur, client, etc.) et de les connecter entre eux. 
+
+## **Installation**
+
+### <u>Prérequis</u>
+
+Pour pouvoir utiliser ce logiciel, il faut installer les librairies
+suivantes :
+
+* TKinter
+* Re
+* PIL
+
+### <u>Installation</u>
+
+Pour installer ce logiciel, il suffit de cloner le dépôt git suivant :  
+https://github.com/IUT-Beziers/r309-tp2-nicolas-le-lan
+
+et de lancer le fichier exercice[1,2,3].py
+
+## **Utilisation**
+### <u>Eléments</u>
+#### Création
+Pour créer un élément, il faut cliquer sur le bouton du type d'élément souhaité et cliquer sur la zone de dessin.
+Il est aussi possible de choisir un element en effectuant un clic droit sur la zone de dessin.
+
+#### Déplacement
+Pour déplacer un élément, il faut cliquer sur l'élément et le déplacer avec la souris, en ayant préalablement cliqué sur le bouton "Souris".
+
+#### Modification
+Pour modifier un élément, il faut faire un clic droit sur l'élément et choisir l'option souhaitée.
+#### Suppression
+Pour supprimer un élément, il faut faire un clic droit sur l'élément et choisir l'option "Supprimer".
+
+#### Propriétés
+Pour afficher et modifier les propriétés d'un élément, il faut faire un clic droit sur l'élément et choisir "Proriétés".
+
+Une fenêtre s'ouvre alors et permet de modifier les propriétés de l'élément, c'est à dire son nom, son icone, ses connexions, etc.
+
+### <u>Connexion</u>
+#### Création
+Pour créer une connexion, il faut cliquer sur le bouton "Dessin", "Ligne" ou "Flèche" et cliquer-déplacer la souris de l'élément source vers l'élément cible.
+
+#### Suppression
+Pour supprimer une connexion, il faut faire un clic droit sur la connexion et choisir "Supprimer".
+
+### <u>Suppression</u>
+Pour tout supprimer, il faut cliquer sur le bouton "Effacer".

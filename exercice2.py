@@ -8,7 +8,7 @@ R309 TP 2 Exercice 2
 import os
 import re
 from tkinter import *
-from tkinter import ttk, _flatten, filedialog as fd
+from tkinter import ttk, _flatten
 from PIL import Image, ImageTk
 
 # Creation de l'application
@@ -49,7 +49,7 @@ class Application(ttk.Frame):
         self.toolbar_line = Button(self.toolbar, text="Ligne",compound=TOP, image=self.toolbar_line_img, command=lambda: self.create({"object": "link", "type": "line"}, self.toolbar_line))
         self.toolbar_line.pack(side=LEFT, padx=2, pady=2)
         self.toolbar_arrow_img = MyImage("./img/toolbar/arrow.png", 20, 20).get_image()
-        self.toolbar_arrow = Button(self.toolbar, text="Flêche", compound=TOP, image=self.toolbar_arrow_img, command=lambda: self.create({"object": "link", "type": "arrow"}, self.toolbar_arrow))
+        self.toolbar_arrow = Button(self.toolbar, text="Flèche", compound=TOP, image=self.toolbar_arrow_img, command=lambda: self.create({"object": "link", "type": "arrow"}, self.toolbar_arrow))
         self.toolbar_arrow.pack(side=LEFT, padx=2, pady=2)
         self.toolbar_clear_img = MyImage("./img/toolbar/clear.png", 20, 20).get_image()
         self.toolbar_clear = Button(self.toolbar, text="Effacer", compound=TOP, image=self.toolbar_clear_img, command=self.clear_image)
@@ -63,7 +63,7 @@ class Application(ttk.Frame):
         self.menu.add_command(label="Routeur", command=lambda: self.create({"object": "device", "type": "router"}, self.toolbar_router))
         self.menu.add_command(label="Dessin", command=lambda: self.create({"object": "link", "type": "draw"}, self.toolbar_draw))
         self.menu.add_command(label="Ligne", command=lambda: self.create({"object": "link", "type": "line"}, self.toolbar_line))
-        self.menu.add_command(label="Flêche", command=lambda: self.create({"object": "link", "type": "arrow"}, self.toolbar_arrow))
+        self.menu.add_command(label="Flèche", command=lambda: self.create({"object": "link", "type": "arrow"}, self.toolbar_arrow))
 
         self.menu.add_command(label="Tout Effacer", command=self.clear_image)
         self.menu.post(event.x_root, event.y_root)
