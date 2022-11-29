@@ -326,7 +326,6 @@ class Device():
 
 class Port:
     def __init__(self, canvas, device, nb, height=20, width=20):
-        print("Port created")
         self.canvas = canvas
         self.device = device
         self.nb = nb
@@ -344,7 +343,6 @@ class Port:
         self.canvas.tag_bind(self.text, "<Button-1>", self.click)
 
     def click(self, event):
-        print("Port clicked")
         if self.canvas.master.type and self.canvas.master.type["object"] == "link":
             self.link = Link(self.canvas, self.x, self.y, self.canvas.master.type["type"], port1=self)
 
