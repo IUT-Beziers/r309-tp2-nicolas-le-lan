@@ -1,5 +1,5 @@
 """
-R309 TP 2 Exercice 1
+R309 TP 2 Exercice 2
 2022-11 - S3
 @author: nicolas-le-lan
 """
@@ -337,11 +337,12 @@ class Link:
             self.id = self.canvas.create_line(self.x, self.y, self.x, self.y, fill='black', capstyle=ROUND, joinstyle=ROUND)
         if self.type == "draw":
             self.canvas.bind("<B1-Motion>", lambda event: self.draw(event),add="+")
+            self.canvas.bind("<Control-B1-Motion>", lambda event: self.draw_right(event),add="+")
         else:
             self.canvas.bind("<B1-Motion>", lambda event: self.move(event),add="+")
         self.canvas.bind("<ButtonRelease-1>", lambda event: self.stop(event),add="+")
         self.canvas.tag_bind(self.id, "<Button-3>", self.menuClick)
-
+#pouet
     def menuClick(self, event):
         self.menu = Menu(self.canvas, tearoff=0)
         self.menu.add_command(label="Supprimer", command=lambda: self.delete())
@@ -355,6 +356,24 @@ class Link:
         self.canvas.coords(self.id, _flatten(co))
         self.x = event.x
         self.y = event.y
+
+    def draw_right(self, event):
+        co = self.canvas.coords(self.id)
+        dx = event.x - self.x
+        dy = event.y - self.y
+        if abs(dx) > abs(dy):
+            x = event.x
+            y = self.y
+        else:
+            x = self.x
+            y = event.y
+        co.append(x)
+        co.append(y)
+        self.x = x
+
+        self.y = y
+        self.ccords = co
+        self.canvas.coords(self.id, _flatten(co))
 
     def stop(self, event):
         self.canvas.unbind("<B1-Motion>")
@@ -398,13 +417,15 @@ class Link:
             self.canvas.coords(self.id, self.x0, self.y0, self.x, self.y)
 
     def delete(self):
-        if self.device1:
-            self.device1.links.remove(self)
-            self.device1.properties_update()
-        if self.device2:
-            self.device2.links.remove(self)
-            self.device2.properties_update()
-        
+        try:
+            if self.device1:
+                self.device1.links.remove(self)
+                self.device1.properties_update()
+            if self.device2:
+                self.device2.links.remove(self)
+                self.device2.properties_update()
+        except:
+            pass
         self.canvas.delete(self.id) 
 
     def delete_all(self):
@@ -455,7 +476,7 @@ class MyCanvas():
         self.logo.create_image(self.width//2, self.height//2, image=self.img)
         self.device.image = self.img
 
-########################################################################################################################################################
+###############################################n n #########################################################################################################
 
 ##################################
 #      FONCTION PRINCIPALE       #
@@ -463,7 +484,7 @@ class MyCanvas():
 
 # Creation de la fenetre
 root = Tk()
-root.title("Exercice 1")
+root.title("Exercice 2")
 root.geometry("500x500")
 root.minsize(500, 500)
 root.resizable(True, True)

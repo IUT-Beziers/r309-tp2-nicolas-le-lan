@@ -1,5 +1,5 @@
 """
-R309 TP 2 Exercice 1
+R309 TP 2 Exercice 3
 2022-11 - S3
 @author: nicolas-le-lan
 """
@@ -130,8 +130,7 @@ class Application(ttk.Frame):
 #       DEVICE       #
 ######################
 class Device():
-    def __init__(self,canvas:Canvas, type:str, name:str, x:float, y:float, image="default.png", width:float=50, height:float=50, links:list=None):
-        self.links = links if links else []
+    def __init__(self,canvas:Canvas, type:str, name:str, x:float, y:float, image="default.png", width:float=50, height:float=50, links:list=None, ports:list=None):
         self.canvas = canvas
         self.name = name
         self.type = type
@@ -140,19 +139,26 @@ class Device():
         self.y = y
         self.width = width
         self.height = height
+        if type == "client":
+            nb_ports = 1
+        else:
+            nb_ports = 4
         image_filename = "./img/" + self.type + "/" + image
         self.image = MyImage(image_filename, self.width, self.height).get_image()
         self.id = self.canvas.create_image(self.x, self.y, image=self.image)
-        self.text = self.canvas.create_text(self.x, self.y+30, text=self.name)
+        self.text = self.canvas.create_text(self.x, self.y-self.height//2-10, text=self.name)
         self.canvas.tag_bind(self.id, "<B1-Motion>", self.move, add="+")
         self.canvas.tag_bind(self.id, "<Button-3>", self.menuClick)
-        self.canvas.tag_bind(self.id, "<Button-1>", self.click, add="+")
+        #self.canvas.tag_bind(self.id, "<Button-1>", self.click, add="+")
         self.canvas.tag_bind(self.id,"<ButtonRelease-1>", lambda event: self.properties_update(), add="+")
 
-    def click(self, event):
-        if self.canvas.master.type and self.canvas.master.type["object"] == "link":
-            device = self.canvas.master.get_device(event.x, event.y)
-            self.link = Link(self.canvas, event.x, event.y, self.canvas.master.type["type"], device1=device)
+        self.ports = ports if ports else [Port(canvas, self, i+1) for i in range(nb_ports)]
+
+    def get_port(self, x, y):
+        for port in self.ports:
+            if (port.x - port.width <= x <= port.x + port.width and port.y - port.height <= y <= port.y + port.height and port.link == None):
+                return port
+        return None
 
     def move(self, event): # Déplace l'objet
         if not self.canvas.master.type:
@@ -301,15 +307,16 @@ class Device():
         r+=1
         ttk.Separator(window, orient=HORIZONTAL).grid(row=r, column=0, columnspan=4, sticky="ew")
         r+=1
-        if self.links:
+        if self.ports:
             Label(window, text="Connecté à:").grid(row=4, column=1)
-        for link in self.links:
-            Label(window, text=link.id).grid(row=r, column=1)
-            name = link.device2.name if link.device1 == self else link.device1.name
-            Label(window, text=name).grid(row=r, column=2)
-            Button(window, text="Supprimer", command=lambda: link.delete()).grid(row=r, column=3)
-            r+=1
-        if self.links:
+        link_exist = False
+        for port in self.ports:
+            if port.link:
+                link_exist = True
+                Label(window, text=f"{port.name} :").grid(row=r, column=1)
+                Label(window, text=port.link.device2.name).grid(row=r, column=2)
+                r+=1
+        if link_exist:
             r+=1
             ttk.Separator(window, orient=HORIZONTAL).grid(row=r, column=0, columnspan=4, sticky="ew")
         r+=1
@@ -317,15 +324,40 @@ class Device():
 
 ########################################################################################################################################################
 
+class Port:
+    def __init__(self, canvas, device, nb, height=20, width=20):
+        print("Port created")
+        self.canvas = canvas
+        self.device = device
+        self.nb = nb
+        self.height = height
+        self.width = width
+        self.x = self.device.x + self.nb*self.width - self.device.width//2
+        self.y = self.device.y + self.device.height//2
+        x = self.x
+        y = self.y
+        self.image = MyImage("./img/port.png", self.height, self.width).get_image()
+        self.id = canvas.create_image(x, y, image=self.image)
+        self.text = canvas.create_text(x, y-height, text=nb)
+        self.link = None
+        self.canvas.tag_bind(self.id, "<Button-1>", self.click)
+        self.canvas.tag_bind(self.text, "<Button-1>", self.click)
+
+    def click(self, event):
+        print("Port clicked")
+        if self.canvas.master.type and self.canvas.master.type["object"] == "link":
+            self.link = Link(self.canvas, self.x, self.y, self.canvas.master.type["type"], port1=self)
+
+
 #####################
 #       LINK        #
 #####################
 class Link:
-    def __init__(self, canvas, x, y, type, coords=None, device1=None, device2=None):
+    def __init__(self, canvas, x, y, type, coords=None, port1=None, port2=None):
         self.canvas = canvas
         self.type = type
-        self.device1 = device1
-        self.device2 = device2
+        self.port1 = port1
+        self.port2 = port2
         self.coords = coords
         self.x = x
         self.y = y
@@ -337,6 +369,7 @@ class Link:
             self.id = self.canvas.create_line(self.x, self.y, self.x, self.y, fill='black', capstyle=ROUND, joinstyle=ROUND)
         if self.type == "draw":
             self.canvas.bind("<B1-Motion>", lambda event: self.draw(event),add="+")
+            self.canvas.bind("<Control-B1-Motion>", lambda event: self.draw_right(event),add="+")
         else:
             self.canvas.bind("<B1-Motion>", lambda event: self.move(event),add="+")
         self.canvas.bind("<ButtonRelease-1>", lambda event: self.stop(event),add="+")
@@ -356,6 +389,23 @@ class Link:
         self.x = event.x
         self.y = event.y
 
+    def draw_right(self, event):
+        co = self.canvas.coords(self.id)
+        dx = event.x - self.x
+        dy = event.y - self.y
+        if abs(dx) > abs(dy):
+            x = event.x
+            y = self.y
+        else:
+            x = self.x
+            y = event.y
+        co.append(x)
+        co.append(y)
+        self.x = x
+        self.y = y
+        self.ccords = co
+        self.canvas.coords(self.id, _flatten(co))
+
     def stop(self, event):
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
@@ -363,13 +413,14 @@ class Link:
             self.delete()
         else:
             device = self.canvas.master.get_device(event.x, event.y)
-            if device:
-                if self.device1:
-                    self.device2 = device
-                    self.device1.links.append(self)
-                    self.device2.links.append(self)
-                    self.device1.properties_update()
-                    self.device2.properties_update()
+            port = device.get_port(event.x, event.y)
+            if port:
+                if self.port1:
+                    self.port2 = port
+                    self.port1.links = self
+                    self.port2.links = self
+                    self.port1.device.properties_update()
+                    self.port2.device.properties_update()
             else:
                 self.delete()
 
@@ -380,7 +431,7 @@ class Link:
 
     def update(self, device):
         if self.type == "draw":
-            if self.device2 == device:
+            if self.port2 == device:
                 self.draw(device)
             else:
                 co = self.canvas.coords(self.id)
@@ -398,13 +449,15 @@ class Link:
             self.canvas.coords(self.id, self.x0, self.y0, self.x, self.y)
 
     def delete(self):
-        if self.device1:
-            self.device1.links.remove(self)
-            self.device1.properties_update()
-        if self.device2:
-            self.device2.links.remove(self)
-            self.device2.properties_update()
-        
+        try:
+            if self.device1:
+                self.device1.links.remove(self)
+                self.device1.properties_update()
+            if self.device2:
+                self.device2.links.remove(self)
+                self.device2.properties_update()
+        except:
+            pass
         self.canvas.delete(self.id) 
 
     def delete_all(self):
@@ -463,7 +516,7 @@ class MyCanvas():
 
 # Creation de la fenetre
 root = Tk()
-root.title("Exercice 1")
+root.title("Exercice 3")
 root.geometry("500x500")
 root.minsize(500, 500)
 root.resizable(True, True)
